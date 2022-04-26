@@ -1,7 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\DashboardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +17,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['middleware'=>['auth']], function () {
+  /*  Auth::logout();*/
+    Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
+});
+Route::group(['middleware'=>['auth','role:user']], function () {
+    /*  Auth::logout();*/
+    Route::get('/dashboard/myprofile',[DashboardController::class, 'myprofile'])->name('dashboard.myprofile');
+});
+
+Route::group(['middleware'=>['auth','role:blogwriter']], function () {
+    /*  Auth::logout();*/
+    Route::get('/dashboard/postcreate',[DashboardController::class, 'postcreate'])->name('dashboard.postcreate');
+});
+require __DIR__.'/auth.php';
